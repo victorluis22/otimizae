@@ -12,7 +12,7 @@ const routes = [
 
 export default function Navigation({}){
   return (
-    <nav className="w-1/4 p-10">
+    <nav className="w-full p-10 sm:w-1/4">
       {
         routes.map((eachRoute, index) => {
           return <Category key={index} category={eachRoute.category} pages={eachRoute.pages}/>

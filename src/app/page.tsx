@@ -1,10 +1,16 @@
 import Text from "./global/Text";
 import Title from "./global/Title";
+import Image from "next/image";
 
 export default function Home() {
   return (
-    <div>
-        <img src="/logo.svg" alt="Imagem da logo do Otimizae" className="w-52"/>
+    <div className="flex flex-col items-center sm:items-start">
+        <Image  
+          src="/logo.svg" 
+          alt="Imagem da logo do Otimizae"
+          width={208}
+          height={208}
+        />
 
         <Title text="Calculadora para otimização" size="xl"/>
         
@@ -14,7 +20,12 @@ export default function Home() {
         <Title text="Desenvolvido com ❤️ por Victor" size="l"/>
 
         <a href="https://github.com/victorluis22" target="_blank" rel="noreferrer noopener">
-            <img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white" alt="Logo Github" className="w-20"/>
+            <Image
+             src="/github.svg" 
+             alt="Logo Github" 
+             width={80}
+             height={80}
+            />
         </a>
     </div>
   )
