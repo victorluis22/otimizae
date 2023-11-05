@@ -5,7 +5,7 @@ import Title from "@/app/global/Title";
 import { TextField } from "@mui/material";
 import { usePathname } from "next/navigation";
 
-export default function secaoAurea({}){
+export default function SecaoAurea({}){
     const pathname = usePathname()
 
     return (
