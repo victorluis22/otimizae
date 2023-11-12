@@ -2,7 +2,7 @@ import { ButtonProps } from "./types";
 import { Button } from '@mui/material';
 import { MdSend } from 'react-icons/md';
 
-export default function NormalButton({action, text}: ButtonProps){
+export default function NormalButton({text}: ButtonProps){
     return (
         <div className="my-3">
             <Button
@@ -16,7 +16,7 @@ export default function NormalButton({action, text}: ButtonProps){
                 variant="outlined" 
                 endIcon={<MdSend />} 
                 disableElevation
-                onClick={() => action()}
+                type="submit"
             >
                 {text}
             </Button>
