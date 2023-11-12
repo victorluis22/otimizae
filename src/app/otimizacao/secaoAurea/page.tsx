@@ -7,8 +7,9 @@ import Text from "@/app/global/Text";
 import Title from "@/app/global/Title";
 import { goldenSearch, startAPI } from "@/app/services/api";
 import { TextField } from "@mui/material";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function SecaoAurea({}){
     const pathname = usePathname()
@@ -42,7 +43,8 @@ export default function SecaoAurea({}){
 
                 success(id, "Comunicação feita com sucesso")
             }
-            catch{
+            catch (e){
+                console.log(e)
                 error(id, "Erro ao se comunicar com o servidor.")
             }
         }
@@ -97,7 +99,14 @@ export default function SecaoAurea({}){
             <NormalButton action={submit} text="Enviar"/>
             
             {result.sucess ?
-                <p>ola </p>
+                <div className="my-3 ">
+                    <Title text="Resultados" size="xl" />
+                    <Image src={`data:image/jpeg;base64,${result.img}`} alt="Gráfico do Resultado" width={500} height={500} />
+                    <Text text={`Função minimizada: ${expression}`}/>
+                    <Text text={`x: ${result.x}`}/>
+                    <Text text={`y: ${result.fx}`}/>
+                    <Text text={`Iterações: ${result.time}`}/>
+                </div>
                 :
                 null
             }

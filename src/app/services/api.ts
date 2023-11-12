@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const api = axios.create({
     // baseURL: 'http://localhost:5000' //Development URL
-    baseURL: 'https://otimizae-api.onrender.com/' //Production URL
+    baseURL: process.env.NEXT_PUBLIC_API_URL //Production URL
 })
 
 export const startAPI = async () => {
