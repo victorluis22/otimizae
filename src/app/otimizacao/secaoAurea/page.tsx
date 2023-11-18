@@ -129,7 +129,7 @@ export default function SecaoAurea({}){
                     <Text text={`y: ${result.fx}`}/>
                     <Text text={`Iterações: ${result.time}`}/>
 
-                    <DataTable data={result.data}/>
+                    <DataTable type="golden" data={result.data}/>
                 </div>
                 :
                 null

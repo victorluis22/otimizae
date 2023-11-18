@@ -18,7 +18,8 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { GoldenDataProps, GoldenDataSingleProps, GoldenDataTableProps } from './types';
+import { BissectionDataSingleProps, GoldenDataSingleProps, RowsType, TableProps } from './types';
+import TableHeader from '../TableHeader';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -30,7 +31,7 @@ interface TablePaginationActionsProps {
   ) => void;
 }
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
@@ -106,34 +107,50 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-export default function DataTable({data}: GoldenDataTableProps){
-  const [rows, setRows] = React.useState(Array<GoldenDataSingleProps>())
+export default function DataTable({type, data}: TableProps){
+  const [rows, setRows] = React.useState(Array<RowsType>())
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const createRows = (data: GoldenDataProps) => {
-    const auxrows = Array<GoldenDataSingleProps>()
-    const { time, a, b, d, x1, x2, fx1, fx2 } = data
-  
-    for (let i = 0; i < time.length; i++){
-      auxrows.push({
-        time: time[i], 
-        a: parseFloat(a[i].toFixed(3)), 
-        b: parseFloat(b[i].toFixed(3)), 
-        d: parseFloat(d[i].toFixed(3)), 
-        x1: parseFloat(x1[i].toFixed(3)), 
-        fx1: parseFloat(fx1[i].toFixed(3)), 
-        x2: parseFloat(x2[i].toFixed(3)), 
-        fx2: parseFloat(fx2[i].toFixed(3))
-      })
+  const createRows = (type: "golden" | "bissection") => {
+    if (type === "golden" && "d" in data){ // Object data can be of various types, so "d" in data choses GoldenDataProps in this case
+      const auxrows = Array<GoldenDataSingleProps>()
+      const { time, a, b, d, x1, x2, fx1, fx2 } = data
+    
+      for (let i = 0; i < time.length; i++){
+        auxrows.push({
+          time: time[i], 
+          a: parseFloat(a[i].toFixed(3)), 
+          b: parseFloat(b[i].toFixed(3)), 
+          d: parseFloat(d[i].toFixed(3)), 
+          x1: parseFloat(x1[i].toFixed(3)), 
+          fx1: parseFloat(fx1[i].toFixed(3)), 
+          x2: parseFloat(x2[i].toFixed(3)), 
+          fx2: parseFloat(fx2[i].toFixed(3))
+        })
+      }
+      setRows(auxrows)
     }
-    setRows(auxrows)
-    console.log(auxrows)
+    else if (type === "bissection" && "lmbda" in data){
+      const auxrows = Array<BissectionDataSingleProps>()
+      const { time, a, b, lmbda, flmbda } = data
+    
+      for (let i = 0; i < time.length; i++){
+        auxrows.push({
+          time: time[i], 
+          a: parseFloat(a[i].toFixed(3)), 
+          b: parseFloat(b[i].toFixed(3)), 
+          lmbda: parseFloat(lmbda[i].toFixed(3)), 
+          flmbda: parseFloat(flmbda[i].toFixed(3)), 
+        })
+      }
+      setRows(auxrows)
+    }
   }
 
   React.useEffect(() => {
-    createRows(data)
-  }, [])
+    createRows(type)
+  }, [data])
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -159,47 +176,25 @@ export default function DataTable({data}: GoldenDataTableProps){
         <TableHead>
           <TableRow>
             <StyledTableCell>Iteração</StyledTableCell>
-            <StyledTableCell>a</StyledTableCell>
-            <StyledTableCell>b</StyledTableCell>
-            <StyledTableCell>d</StyledTableCell>
-            <StyledTableCell>x1</StyledTableCell>
-            <StyledTableCell>fx1</StyledTableCell>
-            <StyledTableCell>x2</StyledTableCell>
-            <StyledTableCell>fx2</StyledTableCell>
+            <TableHeader type={type} />
           </TableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
             ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             : rows
-          ).map((row: {time: number, a: number, b: number, d: number, x1: number, fx1: number, x2: number, fx2: number}) => (
-            <StyledTableRow key={row.time}>
-              <StyledTableCell component="th" scope="row">
-                {row.time}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.a}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.b}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.d}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.x1}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.fx1}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.x2}
-              </StyledTableCell>
-              <StyledTableCell>
-                {row.fx2}
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
+          ).map((row: RowsType) => {
+            let properties = Object.keys(row)
+            return (
+              <StyledTableRow key={row.time}>
+                {properties.map((eachProp, index) => (
+                  <StyledTableCell key={index}>
+                    {row[eachProp]}
+                  </StyledTableCell>
+                ))}
+              </StyledTableRow>
+            )
+          })}
           {emptyRows > 0 && (
             <StyledTableRow style={{ height: 53 * emptyRows }}>
               <StyledTableCell colSpan={6} />
