@@ -61,6 +61,9 @@ export default function Bissecao({}){
                 if (status === 400){
                     error(id, "Algum operador usado não é permitido, tente novamente.")
                 }
+                else if(status == 408){
+                    error(id, "O programa demorou muito para responder, tente novamente depois.")
+                }
                 else{
                     error(id, "Erro interno do servidor.")
                 }
