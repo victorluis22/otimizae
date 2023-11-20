@@ -13,6 +13,21 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FormEvent, useState } from 'react'
 
+import ReactDOM from 'react-dom'
+import { useMDXComponent } from 'next-contentlayer/hooks';
+import { allPosts } from 'contentlayer/generated'
+
+export const preLoadKatex = () => {
+    ReactDOM.preload(
+        'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
+        { as: "style", crossOrigin: "anonymous", integrity: "sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" },
+    )
+    ReactDOM.preload(
+        'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js',
+        { as: "script", crossOrigin: "anonymous", integrity: "sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" },
+    )
+}
+
 export default function Newton({}){
     const pathname = usePathname()
 
@@ -34,6 +49,11 @@ export default function Newton({}){
             flmbda: [0]
         }
     })
+
+    const post = allPosts.find((post) => post._raw.sourceFileName === "newton.mdx")
+    const MDXContent = useMDXComponent(post ? post.body.code: "Error")
+
+    preLoadKatex()
 
     const submit = async (e: FormEvent) => {
         e.preventDefault()
@@ -78,13 +98,11 @@ export default function Newton({}){
         <div>
             <p className="font-bold text-dark-blue">{pathname.slice(1,pathname.length).replaceAll("/", " / ")}</p>
 
-            <Title text="Calculadora de busca pelo método de Newton" size="xl"/>
-            
-            <Text text="O método de busca de Newton para funções unidimensionais é uma forma que utiliza derivadas para calcular o mínimo ou máximo de uma função objetivo. O método inicia-se por meio de um palpite ou chute inicial, um valor que será substituído na função e iniciará todo o processo iterativo. A cada iteração, o valor de x é alterado seguindo a seguinte fórmula" />
+            <Title text={post ? post.title: "Error"} size="xl"/>
 
-            
-
-            <Text text="A ideia básica do método de bisseção é dividir repetidamente o intervalo no qual se suspeita que o mínimo está localizado pela metade e, em seguida, selecionar o subintervalo no qual o mínimo deve estar."/>
+            <div className="flex gap-3 my-3 text-l flex-col">
+                <MDXContent />
+            </div>
 
             <form onSubmit={(e) => submit(e)}>
                 <TextField
@@ -126,7 +144,7 @@ export default function Newton({}){
                     <Text text={`y: ${result.fx}`}/>
                     <Text text={`Iterações: ${result.time}`}/>
 
-                    <DataTable type="bissection" data={result.data}/>
+                    <DataTable type="newton" data={result.data}/>
                 </div>
                 :
                 null

@@ -18,7 +18,7 @@ import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { BissectionDataSingleProps, GoldenDataSingleProps, RowsType, TableProps } from './types';
+import { BissectionDataSingleProps, GoldenDataSingleProps, MethodType, NewtonDataSingleProps, RowsType, TableProps } from './types';
 import TableHeader from '../TableHeader';
 
 interface TablePaginationActionsProps {
@@ -112,7 +112,8 @@ export default function DataTable({type, data}: TableProps){
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const createRows = (type: "golden" | "bissection") => {
+  const createRows = (type: MethodType) => {
+    const precision = 12
     if (type === "golden" && "d" in data){ // Object data can be of various types, so "d" in data choses GoldenDataProps in this case
       const auxrows = Array<GoldenDataSingleProps>()
       const { time, a, b, d, x1, x2, fx1, fx2 } = data
@@ -120,28 +121,43 @@ export default function DataTable({type, data}: TableProps){
       for (let i = 0; i < time.length; i++){
         auxrows.push({
           time: time[i], 
-          a: parseFloat(a[i].toFixed(3)), 
-          b: parseFloat(b[i].toFixed(3)), 
-          d: parseFloat(d[i].toFixed(3)), 
-          x1: parseFloat(x1[i].toFixed(3)), 
-          fx1: parseFloat(fx1[i].toFixed(3)), 
-          x2: parseFloat(x2[i].toFixed(3)), 
-          fx2: parseFloat(fx2[i].toFixed(3))
+          a: parseFloat(a[i].toFixed(precision)), 
+          b: parseFloat(b[i].toFixed(precision)), 
+          d: parseFloat(d[i].toFixed(precision)), 
+          x1: parseFloat(x1[i].toFixed(precision)), 
+          fx1: parseFloat(fx1[i].toFixed(precision)), 
+          x2: parseFloat(x2[i].toFixed(precision)), 
+          fx2: parseFloat(fx2[i].toFixed(precision))
         })
       }
       setRows(auxrows)
     }
-    else if (type === "bissection" && "lmbda" in data){
+    else if (type === "bissection" && "flmbda" in data){
       const auxrows = Array<BissectionDataSingleProps>()
       const { time, a, b, lmbda, flmbda } = data
     
       for (let i = 0; i < time.length; i++){
         auxrows.push({
           time: time[i], 
-          a: parseFloat(a[i].toFixed(3)), 
-          b: parseFloat(b[i].toFixed(3)), 
-          lmbda: parseFloat(lmbda[i].toFixed(3)), 
-          flmbda: parseFloat(flmbda[i].toFixed(3)), 
+          a: parseFloat(a[i].toFixed(precision)), 
+          b: parseFloat(b[i].toFixed(precision)), 
+          lmbda: parseFloat(lmbda[i].toFixed(precision)), 
+          flmbda: parseFloat(flmbda[i].toFixed(precision)), 
+        })
+      }
+      setRows(auxrows)
+    }
+    else if (type === "newton" && "firstderiv" in data){
+      const auxrows = Array<NewtonDataSingleProps>()
+      const { time, firstderiv, secondderiv, lmbda, lmbdanext } = data
+    
+      for (let i = 0; i < time.length; i++){
+        auxrows.push({
+          time: time[i], 
+          firstderiv: parseFloat(firstderiv[i].toFixed(precision)), 
+          secondderiv: parseFloat(secondderiv[i].toFixed(precision)), 
+          lmbda: parseFloat(lmbda[i].toFixed(precision)), 
+          lmbdanext: parseFloat(lmbdanext[i].toFixed(precision)), 
         })
       }
       setRows(auxrows)
@@ -185,6 +201,7 @@ export default function DataTable({type, data}: TableProps){
             : rows
           ).map((row: RowsType) => {
             let properties = Object.keys(row)
+            console.log(properties)
             return (
               <StyledTableRow key={row.time}>
                 {properties.map((eachProp, index) => (

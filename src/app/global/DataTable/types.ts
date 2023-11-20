@@ -1,9 +1,10 @@
 export interface TableProps {
-    type: "golden" | "bissection"
-    data: GoldenDataProps | BissectionDataProps
+    type: MethodType
+    data: GoldenDataProps | BissectionDataProps | NewtonDataProps
 }
 
-export type RowsType = GoldenDataSingleProps | BissectionDataSingleProps;
+export type RowsType = GoldenDataSingleProps | BissectionDataSingleProps | NewtonDataSingleProps;
+export type MethodType = "golden" | "bissection" | "newton"
 
 export interface GoldenDataProps{
     time: number[]
@@ -43,4 +44,21 @@ export interface BissectionDataSingleProps{
     b: number
     lmbda: number
     flmbda: number
+}
+
+export interface NewtonDataProps{
+    time: number[]
+    firstderiv: number[]
+    secondderiv: number[]
+    lmbda: number[]
+    lmbdanext: number[]
+}
+
+export interface NewtonDataSingleProps{
+    [index: string]: number
+    time: number
+    firstderiv: number
+    secondderiv: number
+    lmbda: number
+    lmbdanext: number
 }
